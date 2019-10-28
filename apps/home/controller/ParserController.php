@@ -2471,8 +2471,8 @@ class ParserController extends Controller
                     }
                 }
                 
-                // 不允许从外部获取数据
-                if (preg_match('/(\$_GET\[)|(\$_POST\[)|(\$_REQUEST\[)|(\$_COOKIE\[)|(\$_SESSION\[)/i', $matches[1][$i])) {
+                // 过滤特殊字符串
+                if (preg_match('/(\$_GET\[)|(\$_POST\[)|(\$_REQUEST\[)|(\$_COOKIE\[)|(\$_SESSION\[)|(file_put_contents)|(fwrite)|(phpinfo)|(base64_decode)/i', $matches[1][$i])) {
                     $danger = true;
                 }
                 
@@ -2717,6 +2717,8 @@ class ParserController extends Controller
                     } else {
                         $content = str_replace($search, $this->adjustLabelData($params, $data->ico), $content);
                     }
+                } elseif (preg_match('/<img\s+.*?src=\s?[\'|\"](.*?(\.gif|\.jpg|\.png|\.jpeg))[\'|\"].*?[\/]?>/i', $data->content, $srcs) && isset($srcs[1])) {
+                    $content = str_replace($search, $this->adjustLabelData($params, $srcs[1]), $content);
                 } else {
                     $content = str_replace($search, $this->adjustLabelData($params, STATIC_DIR . '/images/nopic.png'), $content);
                 }
@@ -2830,6 +2832,8 @@ class ParserController extends Controller
                     } else {
                         $content = str_replace($search, $this->adjustLabelData($params, $data->ico), $content);
                     }
+                } elseif (preg_match('/<img\s+.*?src=\s?[\'|\"](.*?(\.gif|\.jpg|\.png|\.jpeg))[\'|\"].*?[\/]?>/i', $data->content, $srcs) && isset($srcs[1])) {
+                    $content = str_replace($search, $this->adjustLabelData($params, $srcs[1]), $content);
                 } else {
                     $content = str_replace($search, $this->adjustLabelData($params, STATIC_DIR . '/images/nopic.png'), $content);
                 }
