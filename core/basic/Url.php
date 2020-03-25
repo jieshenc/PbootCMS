@@ -109,35 +109,37 @@ class Url
         if (! isset(self::$urls[$path])) {
             $url_rule_type = Config::get('url_rule_type') ?: 3;
             $url_rule_suffix = Config::get('url_rule_suffix') ?: '.html';
-            $suffix = $suffix ? $url_rule_suffix : '/';
+            if ($suffix === true) {
+                $suffix = $url_rule_suffix;
+            } elseif ($suffix === false) {
+                $suffix = '/';
+            }
             $path = ltrim($path, '/');
             
-            // 去除模块及控制器部分
-            if (! ! $pos = strpos($path, '/', 5)) {
-                $path = substr($path, $pos + 1);
-            }
-            
-            switch ($url_rule_type) {
-                case '1': // 普通模式
-                    $link = SITE_DIR . '/index.php' . '/' . $path . $suffix;
-                    break;
-                case '2': // 伪静态模式
-                    $link = SITE_DIR . '/' . $path . $suffix;
-                    break;
-                case '3': // 兼容模式
-                    $link = SITE_DIR . '/?' . $path . $suffix;
-                    break;
-                default:
-                    error('地址模式设置错误,请登录后台重新设置！');
-            }
+            // 去除默认模块及控制器部分
+            $path = str_replace('home/Index/', '', $path);
             
             if (! $path) {
                 if ($url_rule_type == 1) {
-                    $link = SITE_DIR . '/index.php';
+                    $link = SITE_INDEX_DIR . '/index.php';
                 } elseif ($url_rule_type == 2) {
-                    $link = SITE_DIR;
+                    $link = SITE_INDEX_DIR;
                 } else {
-                    $link = SITE_DIR . '/?';
+                    $link = SITE_INDEX_DIR . '/?';
+                }
+            } else {
+                switch ($url_rule_type) {
+                    case '1': // 普通模式
+                        $link = SITE_INDEX_DIR . '/index.php' . '/' . $path . $suffix;
+                        break;
+                    case '2': // 伪静态模式
+                        $link = SITE_INDEX_DIR . '/' . $path . $suffix;
+                        break;
+                    case '3': // 兼容模式
+                        $link = SITE_INDEX_DIR . '/?' . $path . $suffix;
+                        break;
+                    default:
+                        error('地址模式设置错误,请登录后台重新设置！');
                 }
             }
             self::$urls[$path] = $link;

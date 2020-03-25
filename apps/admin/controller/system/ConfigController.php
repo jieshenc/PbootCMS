@@ -149,8 +149,32 @@ class ConfigController extends Controller
             }
         }
         
-        // 关键词过滤处理
-        if ($key == 'content_keyword_replace' && $value) {
+        // 模板目录修改
+        if (($key == 'tpl_html_dir') && $value) {
+            $value = basename($value);
+            $htmldir = $this->config('tpl_html_dir');
+            $tpl_path = ROOT_PATH . current($this->config('tpl_dir')) . '/' . model('admin.content.ContentSort')->getTheme();
+            
+            if (! $htmldir) {
+                if (! create_dir($tpl_path . '/' . $value)) {
+                    return;
+                } // 原来没有目录时只创建目录
+            } else {
+                if ($value != $htmldir) {
+                    if (! rename($tpl_path . '/' . $htmldir, $tpl_path . '/' . $value)) {
+                        return; // 修改失败
+                    }
+                }
+            }
+        }
+        
+        // 数据分割处理
+        $hander = array(
+            'content_keyword_replace',
+            'ip_deny',
+            'ip_allow'
+        );
+        if (in_array($key, $hander) && $value) {
             $value = str_replace("\r\n", ",", $value); // 替换回车
             $value = str_replace("，", ",", $value); // 替换中文逗号分割符
         }

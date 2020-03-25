@@ -252,19 +252,47 @@ class ParserModel extends Model
     }
 
     // 列表内容,带分页，不区分语言，兼容跨语言
-    public function getLists($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1)
+    public function getLists($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1, $lfield = null)
     {
-        $fields = array(
-            'a.*',
-            'b.name as sortname',
-            'b.filename as sortfilename',
-            'c.name as subsortname',
-            'c.filename as subfilename',
-            'd.type',
-            'd.name as modelname',
-            'd.urlname',
-            'e.*'
-        );
+        $ext_table = false;
+        if ($lfield) {
+            $lfield .= ',id,outlink,type,scode,sortfilename,filename,urlname'; // 附加必须字段
+            $fields = explode(',', $lfield);
+            $fields = array_unique($fields); // 去重
+            foreach ($fields as $key => $value) {
+                if (strpos($value, 'ext_') === 0) {
+                    $ext_table = true;
+                    $fields[$key] = 'e.' . $value;
+                } elseif ($value == 'sortname') {
+                    $fields[$key] = 'b.name as sortname';
+                } elseif ($value == 'sortfilename') {
+                    $fields[$key] = 'b.filename as sortfilename';
+                } elseif ($value == 'subsortname') {
+                    $fields[$key] = 'c.name as subsortname';
+                } elseif ($value == 'subfilename') {
+                    $fields[$key] = 'c.filename as subfilename';
+                } elseif ($value == 'type' || $value == 'urlname') {
+                    $fields[$key] = 'd.' . $value;
+                } elseif ($value == 'modelname') {
+                    $fields[$key] = 'd.name as modelname';
+                } else {
+                    $fields[$key] = 'a.' . $value;
+                }
+            }
+        } else {
+            $ext_table = true;
+            $fields = array(
+                'a.*',
+                'b.name as sortname',
+                'b.filename as sortfilename',
+                'c.name as subsortname',
+                'c.filename as subfilename',
+                'd.type',
+                'd.name as modelname',
+                'd.urlname',
+                'e.*'
+            );
+        }
         $join = array(
             array(
                 'ay_content_sort b',
@@ -280,13 +308,17 @@ class ParserModel extends Model
                 'ay_model d',
                 'b.mcode=d.mcode',
                 'LEFT'
-            ),
-            array(
+            )
+        );
+        
+        // 加载扩展字段表
+        if ($ext_table) {
+            $join[] = array(
                 'ay_content_ext e',
                 'a.id=e.contentid',
                 'LEFT'
-            )
-        );
+            );
+        }
         
         $scode_arr = array();
         if ($scode) {
@@ -324,19 +356,47 @@ class ParserModel extends Model
     }
 
     // 列表内容，不带分页，不区分语言，兼容跨语言
-    public function getList($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1)
+    public function getList($scode, $num, $order, $filter = array(), $tags = array(), $select = array(), $fuzzy = true, $start = 1, $lfield = null)
     {
-        $fields = array(
-            'a.*',
-            'b.name as sortname',
-            'b.filename as sortfilename',
-            'c.name as subsortname',
-            'c.filename as subfilename',
-            'd.type',
-            'd.name as modelname',
-            'd.urlname',
-            'e.*'
-        );
+        $ext_table = false;
+        if ($lfield) {
+            $lfield .= ',id,outlink,type,scode,sortfilename,filename,urlname'; // 附加必须字段
+            $fields = explode(',', $lfield);
+            $fields = array_unique($fields); // 去重
+            foreach ($fields as $key => $value) {
+                if (strpos($value, 'ext_') === 0) {
+                    $ext_table = true;
+                    $fields[$key] = 'e.' . $value;
+                } elseif ($value == 'sortname') {
+                    $fields[$key] = 'b.name as sortname';
+                } elseif ($value == 'sortfilename') {
+                    $fields[$key] = 'b.filename as sortfilename';
+                } elseif ($value == 'subsortname') {
+                    $fields[$key] = 'c.name as subsortname';
+                } elseif ($value == 'subfilename') {
+                    $fields[$key] = 'c.filename as subfilename';
+                } elseif ($value == 'type' || $value == 'urlname') {
+                    $fields[$key] = 'd.' . $value;
+                } elseif ($value == 'modelname') {
+                    $fields[$key] = 'd.name as modelname';
+                } else {
+                    $fields[$key] = 'a.' . $value;
+                }
+            }
+        } else {
+            $ext_table = true;
+            $fields = array(
+                'a.*',
+                'b.name as sortname',
+                'b.filename as sortfilename',
+                'c.name as subsortname',
+                'c.filename as subfilename',
+                'd.type',
+                'd.name as modelname',
+                'd.urlname',
+                'e.*'
+            );
+        }
         $join = array(
             array(
                 'ay_content_sort b',
@@ -352,13 +412,17 @@ class ParserModel extends Model
                 'ay_model d',
                 'b.mcode=d.mcode',
                 'LEFT'
-            ),
-            array(
+            )
+        );
+        
+        // 加载扩展字段表
+        if ($ext_table) {
+            $join[] = array(
                 'ay_content_ext e',
                 'a.id=e.contentid',
                 'LEFT'
-            )
-        );
+            );
+        }
         
         $scode_arr = array();
         if ($scode) {

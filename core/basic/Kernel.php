@@ -3,7 +3,7 @@ namespace core\basic;
 class Kernel { 
     private static $krlr84d42fa73e6dd4f551b05b7aeae3a6b9Array; 
     public static function run() { 
-        self:: aptdlmda91fa2167ce43c937c4ee4b3106a9b0d(); 
+//        self:: aptdlmda91fa2167ce43c937c4ee4b3106a9b0d(); 
         self:: azruirtrda91fe542b4f4f4ea82292d7aaacdc6d1(); 
         $krlr84d42fa73e6dd4f551b05b7aeae3a6b9_info = self:: xdljrlrzlmze4c3ede6e1b8360831b29b1d1ad4a4dd(); 
         $krlr84d42fa73e6dd4f551b05b7aeae3a6b9_info = self:: ihavaplu674b0a2c6a70846f5a4ad5c9bc8582b8($krlr84d42fa73e6dd4f551b05b7aeae3a6b9_info); 

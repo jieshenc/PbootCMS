@@ -69,7 +69,7 @@ class Paging
         
         // 设置分页大小
         if (! isset($this->pageSize)) {
-            $this->pageSize = Config::get('pagesize') ?: 15;
+            $this->pageSize = get('pagesize') ?: Config::get('pagesize') ?: 15;
         }
         
         // 分页数字条数量
@@ -176,7 +176,7 @@ class Paging
                             $path = $prepath . $url_break_char . $page . $url_rule_sort_suffix . query_string('p,s');
                         }
                     } else { // 首页分页
-                        $path = ($page == 1) ? SITE_DIR . '/' : '?page=' . $page;
+                        $path = ($page == 1) ? SITE_INDEX_DIR . '/' : '?page=' . $page;
                     }
                 } else {
                     if ($url_rule_type == 3 && isset($_SERVER["QUERY_STRING"]) && $qs = $_SERVER["QUERY_STRING"]) {
@@ -204,9 +204,9 @@ class Paging
                             
                             // 第一页链接处理
                             if ($page == 1) {
-                                $path = SITE_DIR . '/?' . $path . $url_rule_sort_suffix;
+                                $path = SITE_INDEX_DIR . '/?' . $path . $url_rule_sort_suffix;
                             } else {
-                                $path = SITE_DIR . '/?' . $path . $url_break_char . $page . $url_rule_sort_suffix;
+                                $path = SITE_INDEX_DIR . '/?' . $path . $url_break_char . $page . $url_rule_sort_suffix;
                             }
                             
                             // 附加参数
